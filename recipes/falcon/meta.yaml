@@ -1,0 +1,62 @@
+{% set name = "falcon" %}
+{% set version = "1.0.0" %}
+{% set sha256 = "ddce23a2dd0abba6d19775e9bf7ba64e184b15a0e7163e65f62af63354193f63" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  fn: {{ name }}-{{ version }}.tar.gz
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+  script: python setup.py install --single-version-externally-managed --record record.txt
+  entry_points:
+    - falcon-bench = falcon.cmd.bench:main
+    - falcon-print-routes = falcon.cmd.print_routes:main
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - cython
+    - six >=1.4.0
+    - python-mimeparse
+  run:
+    - python
+    - six >=1.4.0
+    - python-mimeparse
+
+test:
+  imports:
+    - falcon
+    - falcon.bench
+    - falcon.bench.nuts
+    - falcon.bench.nuts.nuts
+    - falcon.bench.nuts.nuts.controllers
+    - falcon.bench.nuts.nuts.model
+    - falcon.bench.nuts.nuts.tests
+    - falcon.bench.queues
+    - falcon.cmd
+    - falcon.routing
+    - falcon.testing
+    - falcon.util
+  commands:
+    - falcon-bench --help
+
+
+about:
+  home: http://falconframework.org
+  license: Apache 2.0
+  # Currently not included in MANIFEST.in
+  # license_file: LICENSE
+  summary: 'An unladen web framework for building APIs and app backends.'
+  doc_url: http://falcon.readthedocs.io/
+  dev_url: https://github.com/falconry/falcon
+
+extra:
+  recipe-maintainers:
+    - synapticarbors
